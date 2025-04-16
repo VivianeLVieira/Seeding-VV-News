@@ -65,7 +65,8 @@ describe('seed', () => {
         });
     });
 
-    test('topics table has img_url column of varying character of max length 1000', () => {
+    test('topics table has img_url column of text as data_type', () => {
+    //test('topics table has img_url column of varying character of max length 1000', () => { //test updated to have TEXT as data_type instead of VARCHAR (1000)
       return db
         .query(
           `SELECT column_name, data_type, character_maximum_length
@@ -75,8 +76,9 @@ describe('seed', () => {
         )
         .then(({ rows: [column] }) => {
           expect(column.column_name).toBe('img_url');
-          expect(column.data_type).toBe('character varying');
-          expect(column.character_maximum_length).toBe(1000);
+          expect(column.data_type).toBe('text')
+          //expect(column.data_type).toBe('character varying');
+          //expect(column.character_maximum_length).toBe(1000);
         });
     });
   });
