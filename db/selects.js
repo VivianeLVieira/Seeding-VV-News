@@ -8,6 +8,7 @@ function getAllUsers(){ // Get all of the users
 }
 //getAllUsers();
 
+
 /* //Get all of the articles where the topic is coding
 db.query(`SELECT * FROM articles WHERE articles.topic = 'coding';`).then((results) =>{
     console.log(results);
@@ -32,7 +33,9 @@ db.query(`SELECT * FROM articles WHERE author = 'grumpy19';`).then((results) =>{
 })
 */
 
+/*
 //Get all of the comments that have more than 10 votes
 db.query(`SELECT * FROM comments WHERE votes > 10;`).then((results) =>{
     console.log(results);
 })
+*/

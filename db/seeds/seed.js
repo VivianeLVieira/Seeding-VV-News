@@ -31,7 +31,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         title VARCHAR (100),
         topic VARCHAR (40) REFERENCES topics(slug),
         author VARCHAR (50) REFERENCES users(username),
-        body TEXT, 
+        body TEXT NOT NULL, 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
         votes INT DEFAULT 0,
         article_img_url VARCHAR(1000))`) 
@@ -40,7 +40,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(`CREATE TABLE comments(
         comment_id SERIAL PRIMARY KEY,
         article_id INT REFERENCES articles(article_id),
-        body TEXT,
+        body TEXT NOT NULL,
         votes INT DEFAULT 0,
         author VARCHAR (50) REFERENCES users(username),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`) 
@@ -112,7 +112,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(insertCommentsDataQuery);
     })
    /*
-    .then((result) => { // for Loop solution to insertCommentsDataQuery
+    .then((result) => { // forLoop solution to insertCommentsDataQuery
       const articlesInsertResult = result.rows;
       const formattedComments = commentData.map((comment) => {
         let article_id = 0;
