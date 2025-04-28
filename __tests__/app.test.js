@@ -25,7 +25,7 @@ describe("GET /api", () => {
 })
 
 describe("GET /api/topics", () => {
-  test("200: Responds with an object containing with all topics", () => {
+  test("200: Responds with an array of topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -40,12 +40,72 @@ describe("GET /api/topics", () => {
       })
   })
   test("404: Responds with NOT FOUND, when the topics table is empty ", () => {
-    db.query('DELETE FROM topics RETURNING *;')
+    db.query('DELETE FROM topics;')
     return request(app)
       .get("/api/topics")
       .expect(404)
       .then(({ body: { msg }}) => {
           expect(msg).toBe('No topics found')
+      })
+  })
+})
+
+describe("GET /api/articles", () => {
+  test("200: Responds with an array articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String)
+          })
+        })
+      })
+  })
+  test("200: Responds with articles that should not have 'body' key ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        articles.forEach((article) => {
+          expect(article).not.toHaveProperty("body")
+        })
+      })
+  })
+  test("200: Responds with articles sorted by date (articles.created_at) ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'created_at', descending: true})
+      })
+  })
+  test("404: Responds with NOT FOUND, when the articles table is empty ", () => {
+    db.query('DELETE FROM articles;')
+    return request(app)
+      .get("/api/articles")
+      .expect(404)
+      .then(({ body: { msg }}) => {
+          expect(msg).toBe('No articles found')
+      })
+  })
+  test("404: Responds with NOT FOUND, when the PATH to the endpoint can NOT be FOUND", () => {
+    return request(app)
+      .get("/api/articlesInvalid")
+      .expect(404)
+      .then(({ body: { msg }}) => {
+          expect(msg).toBe('Path not found')
       })
   })
 })
