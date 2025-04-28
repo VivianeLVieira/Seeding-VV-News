@@ -23,5 +23,22 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an article filtering by article_id",
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 1,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Seafood can vary acording to the region", 
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "article_img_url": "https://images.pexels.com/photos/158651/"
+        }
+      ]
+    }
   }
 }
