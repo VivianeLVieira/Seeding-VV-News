@@ -1,6 +1,6 @@
 const db = require("../../db/connection")
 
-exports.selectArticleById = (article_id) => {
+const selectArticleById = (article_id) => {
     return db.query(
         `SELECT 
             author,
@@ -23,7 +23,7 @@ exports.selectArticleById = (article_id) => {
     })
 }
 
-exports.selectArticles = () => {
+const selectArticles = () => {
     const query = `SELECT 
             articles.article_id, 
             title,
@@ -48,3 +48,44 @@ exports.selectArticles = () => {
             }
         })
 }
+
+const updateArticleById = ( article_id, inc_votes ) => {
+    const promiseArr = []
+    let queryArgs = []
+    let queryStr = `UPDATE articles SET votes = votes + $1 `
+
+    if (article_id && inc_votes) {
+        queryStr += ` WHERE article_id = $2 `
+        promiseArr.push(checkArticleExists(article_id))
+        queryArgs.push(inc_votes, article_id)
+    } 
+
+    queryStr += ` RETURNING *`
+    promiseArr.unshift(db.query(queryStr, queryArgs))
+
+    return Promise.all(promiseArr).then((results)=> {
+        const queryPromise = results[0]
+        return queryPromise.rows[0];
+    })
+}
+
+const checkArticleExists = (article_id) => {
+    return db
+        .query('SELECT * FROM articles WHERE article_id = $1', [article_id])
+        .then(({ rows }) => {
+            if(rows.length === 0){
+                return Promise.reject({ status: 404, msg: 'No article found' })
+            } else {
+                return rows
+            }
+        })
+}
+
+module.exports = { 
+    selectArticleById,
+    selectArticles,
+    updateArticleById,
+    checkArticleExists
+}
+
+
