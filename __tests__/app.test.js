@@ -227,3 +227,102 @@ describe("GET /api/articles/:article_id/comments", () => {
       })
   })
 })
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: Responds with the posted comment using a valid format", () => {
+    const newComment = { username: 'butter_bridge', body: 'This is a good article.' }
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body: { comment }}) => {
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          article_id: expect.any(Number),
+          body: expect.any(String),
+          votes: expect.any(Number),
+          author: expect.any(String),
+          created_at: expect.any(String),
+        })
+      })
+  })
+  test("201: Responds with the posted comment to an especific article", () => {
+    const newComment = { username: 'butter_bridge', body: 'This is a good article.' }
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body: { comment }}) => {
+        expect(comment.comment_id).toEqual(19)
+        expect(comment.article_id).toEqual(2)
+        expect(comment.body).toEqual('This is a good article.')
+        expect(comment.votes).toEqual(0)
+        expect(comment.author).toEqual('butter_bridge')
+      })
+  })
+  test("201: Responds with the posted comment to an especific article, ignoring votes information (votes should start = 0)", () => {
+    const newComment = { username: 'butter_bridge', body: 'This is a good article.', votes: 10 }
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body: { comment }}) => {
+        expect(comment.comment_id).toEqual(19)
+        expect(comment.article_id).toEqual(2)
+        expect(comment.body).toEqual('This is a good article.')
+        expect(comment.votes).toEqual(0)
+        expect(comment.author).toEqual('butter_bridge')
+      })
+  })
+  test("404: Responds with an error, comment can not be saved when article_id can NOT be FOUND", () => {
+    const newComment = { username: 'butter_bridge', body: 'This is a good article.' }
+    return request(app)
+      .post("/api/articles/777/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('No article found')
+      })
+  })
+  test("404: Responds with an error, comment can not be saved when username can NOT be FOUND", () => {
+    const newComment = { username: 'butter_Invalid', body: 'This is a good article.' }
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('No user found')
+      })
+  })
+  test("404: Responds with an error, when the PATH to the endpoint can NOT be FOUND", () => {
+    const newComment = { username: 'butter_bridge', body: 'This is a good article.' }
+    return request(app)
+      .post("/api/articles/2/commentsInvalid")
+      .send(newComment)
+      .expect(404)
+      .then(({ body: { msg }}) => {
+          expect(msg).toBe('Path not found')
+      })
+  })
+  test("400: Responds with an error, comment can not be saved when username was NOT informed", () => {
+    const newComment = { usernam: 'butter_bridge', body: 'This is a good article.' }
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('Bad Request')
+      })
+  })
+  test("400: Responds with an error, comment can not be saved when article_id is INVALID", () => {
+    const newComment = { usernam: 'butter_bridge', body: 'This is a good article.' }
+    return request(app)
+      .post("/api/articles/InvalidId/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('Bad Request')
+      })
+  })
+})
+
