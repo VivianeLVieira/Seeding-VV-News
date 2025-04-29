@@ -12,7 +12,6 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    console.log("entered controller")
     return selectArticles()
         .then((articles) => {
             res.status(200).send({ articles })
