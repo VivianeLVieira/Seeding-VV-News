@@ -27,6 +27,8 @@ exports.selectCommentsById = (article_id) => {
     })
 }
 
+
+
 exports.insertComment = ( article_id, username, body ) => {
     const promiseArr = []
     let queryArgs = []

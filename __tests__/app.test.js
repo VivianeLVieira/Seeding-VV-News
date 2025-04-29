@@ -228,7 +228,8 @@ describe("GET /api/articles/:article_id/comments", () => {
   })
 })
 
-describe("GET /api/articles/:article_id/comments", () => {
+
+describe("POST /api/articles/:article_id/comments", () => {
   test("201: Responds with the posted comment using a valid format", () => {
     const newComment = { username: 'butter_bridge', body: 'This is a good article.' }
     return request(app)

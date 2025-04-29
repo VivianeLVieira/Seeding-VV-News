@@ -18,6 +18,7 @@ app.get("/api/articles/:article_id", getArticleById)
 
 app.get("/api/articles/:article_id/comments", getCommentsById)
 
+
 app.post("/api/articles/:article_id/comments", postCommentsByArticleId)
 
 app.all('/*splat', (req, res) => {
