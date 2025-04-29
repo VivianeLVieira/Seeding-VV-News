@@ -24,7 +24,6 @@ exports.selectArticleById = (article_id) => {
 }
 
 exports.selectArticles = () => {
-    console.log("entered model")
     const query = `SELECT 
             articles.article_id, 
             title,
