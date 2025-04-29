@@ -82,7 +82,7 @@ describe("GET /api/articles", () => {
         })
       })
   })
-  test("200: Responds with articles sorted by date (articles.created_at) ", () => {
+  test("200: Responds with articles sorted by date descending (articles.created_at) ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -149,8 +149,81 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/InvalidId")
       .expect(400)
-      .then((response)=>{
-          expect(response.body.msg).toBe("Bad Request")
+      .then(({ body: { msg }})=>{
+          expect(msg).toBe('Bad Request')
+      })
+  })
+})
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with an object containing all comments for an specific ID", () => {
+    const  expectedOutput = [
+      {
+        comment_id: 11,
+        article_id: 3,
+        body: 'Ambidextrous marsupial',
+        votes: 0,
+        author: 'icellusedkars',
+        created_at: "2020-09-19T23:10:00.000Z"
+      },
+      {
+        comment_id: 10,
+        article_id: 3,
+        body: 'git push origin master',
+        votes: 0,
+        author: 'icellusedkars',
+        created_at: "2020-06-20T07:24:00.000Z"
+      }
+    ]
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body: { comments }}) => {
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            article_id: expect.any(Number),
+            body: expect.any(String),
+            votes: expect.any(Number),
+            author: expect.any(String),
+            created_at: expect.any(String),
+          })
+        })
+        expect(comments).toHaveLength(2);
+        expect(comments).toEqual(expectedOutput)
+      })
+  })
+  test("200: Responds with all comments for an specific ID sorted by date descending (comments.created_at) ", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body: { comments }}) => {
+        expect(comments).toHaveLength(2)
+        expect(comments).toBeSorted({ key: 'created_at', descending: true })
+      })
+  })
+  test("404: Responds with an error, NO comments FOUND for a specific ID", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(404)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('No comments found')
+      })
+  })
+  test("404: Responds with an error, when the article_id can NOT be FOUND", () => {
+    return request(app)
+      .get("/api/articles/99999/comments")
+      .expect(404)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('Article_id not found')
+      })
+  })
+  test("400: Responds with an error, when the article_id is INVALID", () => {
+    return request(app)
+      .get("/api/articles/invalidId/comments")
+      .expect(400)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('Bad Request')
       })
   })
 })
