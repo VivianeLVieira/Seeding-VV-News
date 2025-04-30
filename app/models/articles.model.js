@@ -1,30 +1,9 @@
 const db = require("../../db/connection")
 
-const selectArticleById = (article_id) => {
-    return db.query(
-        `SELECT 
-            author,
-            title,
-            article_id,
-            body,
-            topic,
-            created_at,
-            votes,
-            article_img_url
-        FROM articles
-        WHERE article_id = $1;`,
-        [article_id]
-    ).then(({ rows }) => {
-        if(rows.length === 0){
-            return Promise.reject({ status: 404, msg: 'No article found' })
-        } else {
-            return rows
-        }
-    })
-}
-
-const selectArticles = () => {
-    const query = `SELECT 
+const selectArticles = (sort_by, order) => {
+    const sortOptions = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url']
+    const orderOptions = ['ASC', 'DESC']
+    let query = `SELECT 
             articles.article_id, 
             title,
             topic,
@@ -32,11 +11,22 @@ const selectArticles = () => {
             articles.created_at,
             articles.votes,
             article_img_url,
-            COUNT(comment_id) as comment_count
+            COUNT(comment_id) ::INT AS comment_count 
         FROM articles LEFT JOIN comments 
             ON articles.article_id = comments.article_id 
-        GROUP BY articles.article_id
-        ORDER BY articles.created_at DESC;`
+        GROUP BY articles.article_id`
+
+    sort_by = sort_by || 'created_at' 
+    order = order || 'DESC' 
+
+    if(!orderOptions.includes(order.toUpperCase())){
+        return Promise.reject({ status: 400, msg: `It is not possible to order by ${order}` }) 
+    }
+    if(sortOptions.indexOf(sort_by.toLowerCase()) === -1 ){
+        return Promise.reject({ status: 400, msg: `It is not possible to sort by ${sort_by}` })
+    }
+
+    query += ` ORDER BY articles.${sort_by} ${order}`;
 
     return db.query(query)
         .then(({ rows })=> {
@@ -46,6 +36,19 @@ const selectArticles = () => {
                 return rows
             }
         })
+}
+
+const selectArticleById = (article_id) => {
+    return db.query(
+        `SELECT * FROM articles WHERE article_id = $1;`,
+        [article_id]
+    ).then(({ rows }) => {
+        if(rows.length === 0){
+            return Promise.reject({ status: 404, msg: 'No article found' })
+        } else {
+            return rows
+        }
+    })
 }
 
 const updateArticleById = ( article_id, inc_votes ) => {
@@ -59,7 +62,7 @@ const updateArticleById = ( article_id, inc_votes ) => {
         queryArgs.push(inc_votes, article_id)
     } 
 
-    queryStr += ` RETURNING *`
+    queryStr += ` RETURNING *;`
     promiseArr.unshift(db.query(queryStr, queryArgs))
 
     return Promise.all(promiseArr).then((results)=> {
@@ -70,7 +73,7 @@ const updateArticleById = ( article_id, inc_votes ) => {
 
 const checkArticleExists = (article_id) => {
     return db
-        .query('SELECT * FROM articles WHERE article_id = $1', [article_id])
+        .query('SELECT * FROM articles WHERE article_id = $1;', [article_id])
         .then(({ rows }) => {
             if(rows.length === 0){
                 return Promise.reject({ status: 404, msg: 'No article found' })

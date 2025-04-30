@@ -12,7 +12,16 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    return selectArticles()
+    const { sort_by, order } = req.query
+    const queryOptions = ['sort_by', 'order']
+
+    for(const query in req.query){
+        if (!queryOptions.includes(query)) {
+            return next({ status: 400, msg: `Invalid query parameter: ${query}` })
+        }
+    }
+
+    return selectArticles(sort_by, order)
         .then((articles) => {
             res.status(200).send({ articles })
         })
