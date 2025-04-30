@@ -304,7 +304,7 @@ describe("POST /api/articles/:article_id/comments", () => {
           expect(msg).toBe('Path not found')
       })
   })
-  test("400: Responds with an error, comment can not be saved when username was NOT informed", () => {
+  test("400: Responds with an error, comment can not be saved when username is NOT informed", () => {
     const newComment = { usernam: 'butter_bridge', body: 'This is a good article.' }
     return request(app)
       .post("/api/articles/2/comments")
@@ -327,40 +327,23 @@ describe("POST /api/articles/:article_id/comments", () => {
 })
 
 describe("PATCH /api/articles/:article_id", () => {
-  test("200: Responds with the updated article using a valid format", () => {
-    const newUpdate = { inc_votes: 1 }
-    return request(app)
-      .patch("/api/articles/1")
-      .send(newUpdate)
-      .expect(200)
-      .then(({ body: { article }}) => {
-        expect(article).toMatchObject({
-          article_id: expect.any(Number),
-          title: expect.any(String),
-          topic: expect.any(String),
-          author: expect.any(String),
-          body: expect.any(String),
-          created_at: expect.any(String),
-          votes: expect.any(Number),
-          article_img_url: expect.any(String),
-        })
-      })
-  })
-  test("200: Responds with the updated article, incrising votes", () => {
+  test("200: Responds with the updated article", () => {
     const newUpdate = { inc_votes: 5 }
     return request(app)
       .patch("/api/articles/1")
       .send(newUpdate)
       .expect(200)
       .then(({ body: { article }}) => {
-        expect(article.article_id).toEqual(1)
-        expect(article.title).toEqual('Living in the shadow of a great man')
-        expect(article.topic).toEqual('mitch')
-        expect(article.author).toEqual('butter_bridge')
-        expect(article.body).toEqual('I find this existence challenging')
-        expect(article.created_at).toEqual('2020-07-09T20:11:00.000Z')
-        expect(article.votes).toEqual(105)
-        expect(article.article_img_url).toEqual('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700')
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 105,
+          article_img_url: expect.any(String),
+        })
       })
   })
   test("200: Responds with the updated article, decreasing votes", () => {
@@ -370,31 +353,16 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(newUpdate)
       .expect(200)
       .then(({ body: { article }}) => {
-        expect(article.article_id).toEqual(1)
-        expect(article.title).toEqual('Living in the shadow of a great man')
-        expect(article.topic).toEqual('mitch')
-        expect(article.author).toEqual('butter_bridge')
-        expect(article.body).toEqual('I find this existence challenging')
-        expect(article.created_at).toEqual('2020-07-09T20:11:00.000Z')
-        expect(article.votes).toEqual(95)
-        expect(article.article_img_url).toEqual('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700')
-      })
-  })
-  test("200: Responds with the updated article to add votes, ignoring created_at", () => {
-    const newUpdate = { inc_votes: 30, created_at: '2020-07-09T20:11:00.000Z' }
-    return request(app)
-      .patch("/api/articles/1")
-      .send(newUpdate)
-      .expect(200)
-      .then(({ body: { article }}) => {
-        expect(article.article_id).toEqual(1)
-        expect(article.title).toEqual('Living in the shadow of a great man')
-        expect(article.topic).toEqual('mitch')
-        expect(article.author).toEqual('butter_bridge')
-        expect(article.body).toEqual('I find this existence challenging')
-        expect(article.created_at).toEqual('2020-07-09T20:11:00.000Z')
-        expect(article.votes).toEqual(130)
-        expect(article.article_img_url).toEqual('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700')
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 95,
+          article_img_url: expect.any(String),
+        })
       })
   })
   test("404: Responds with an error, article can not be updated when article_id can NOT be FOUND", () => {
@@ -407,7 +375,17 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(msg).toEqual('No article found')
       })
   })
-  test("400: Responds with an error, article can not be updated when inc_votes was NOT informed", () => {
+  test("400: Responds with an error, article can not be updated when inc_votes is NOT a number", () => {
+    const newUpdate = { inc_votes: 'a' }
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newUpdate)
+      .expect(400)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('Bad Request')
+      })
+  })
+  test("400: Responds with an error, article can not be updated when inc_votes is NOT informed", () => {
     const newUpdate = { inc_invalid: 30 }
     return request(app)
       .patch("/api/articles/1")

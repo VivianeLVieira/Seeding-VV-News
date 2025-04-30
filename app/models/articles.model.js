@@ -55,12 +55,13 @@ const updateArticleById = ( article_id, inc_votes ) => {
     let queryStr = `UPDATE articles SET votes = votes + $1 `
 
     if (article_id && inc_votes) {
-        queryStr += ` WHERE article_id = $2 `
+        queryStr += ` WHERE article_id = $2`
         promiseArr.push(checkArticleExists(article_id))
         queryArgs.push(inc_votes, article_id)
     } 
 
     queryStr += ` RETURNING *`
+    console.log(queryStr)
     promiseArr.unshift(db.query(queryStr, queryArgs))
 
     return Promise.all(promiseArr).then((results)=> {
