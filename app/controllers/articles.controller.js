@@ -12,8 +12,8 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    const { sort_by, order } = req.query
-    const queryOptions = ['sort_by', 'order']
+    const { sort_by, order, topic } = req.query
+    const queryOptions = ['sort_by', 'order', 'topic']
 
     for(const query in req.query){
         if (!queryOptions.includes(query)) {
@@ -21,7 +21,7 @@ exports.getArticles = (req, res, next) => {
         }
     }
 
-    return selectArticles(sort_by, order)
+    return selectArticles(sort_by, order, topic)
         .then((articles) => {
             res.status(200).send({ articles })
         })

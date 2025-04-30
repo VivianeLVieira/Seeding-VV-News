@@ -1,8 +1,9 @@
 const db = require("../../db/connection")
 
-const selectArticles = (sort_by, order) => {
+const selectArticles = (sort_by, order, topic) => {
     const sortOptions = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url']
     const orderOptions = ['ASC', 'DESC']
+    let queryArgs = []
     let query = `SELECT 
             articles.article_id, 
             title,
@@ -13,22 +14,27 @@ const selectArticles = (sort_by, order) => {
             article_img_url,
             COUNT(comment_id) ::INT AS comment_count 
         FROM articles LEFT JOIN comments 
-            ON articles.article_id = comments.article_id 
-        GROUP BY articles.article_id`
+            ON articles.article_id = comments.article_id`
 
     sort_by = sort_by || 'created_at' 
     order = order || 'DESC' 
 
-    if(!orderOptions.includes(order.toUpperCase())){
+    if (!orderOptions.includes(order.toUpperCase())) {
         return Promise.reject({ status: 400, msg: `It is not possible to order by ${order}` }) 
     }
-    if(sortOptions.indexOf(sort_by.toLowerCase()) === -1 ){
+    if (sortOptions.indexOf(sort_by.toLowerCase()) === -1 ) {
         return Promise.reject({ status: 400, msg: `It is not possible to sort by ${sort_by}` })
     }
 
+    if (topic) {
+        query += ` WHERE topic = $1`
+        queryArgs.push(topic)
+    } 
+
+    query += ` GROUP BY articles.article_id`
     query += ` ORDER BY articles.${sort_by} ${order}`;
 
-    return db.query(query)
+    return db.query(query, queryArgs)
         .then(({ rows })=> {
             if(rows.length === 0){
                 return Promise.reject({ status: 404, msg: 'No articles found' })
