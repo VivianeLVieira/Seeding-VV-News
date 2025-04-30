@@ -66,7 +66,7 @@ describe("GET /api/articles", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
-            comment_count: expect.any(String)
+            comment_count: expect.any(Number)
           })
         })
       })
@@ -82,7 +82,7 @@ describe("GET /api/articles", () => {
         })
       })
   })
-  test("200: Responds with articles sorted by date descending (articles.created_at) ", () => {
+  test("200: Responds with articles sorted by date in descending order as default (articles.created_at) ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -108,6 +108,147 @@ describe("GET /api/articles", () => {
           expect(msg).toBe('Path not found')
       })
   })
+})
+
+describe("GET /api/articles?sort_by=x | x= article_id, title, topic, author, body, created_at, votes, or article_img_url",() => {
+  test("200: Responds with all articles, sorted by article_id", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'article_id', descending: true })
+      })
+  })
+  test("200: Responds with all articles, sorted by title", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'title', descending: true })
+      })
+  })
+  test("200: Responds all articles, sorted by topic", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'topic', descending: true })
+      })
+  })
+  test("200: Responds with all articles, sorted by author", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'author', descending: true })
+      })
+  })
+  test("200: Responds with all articles, sorted by created_at", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'created_at', descending: true })
+      })
+  })
+  test("200: Responds with all articles, sorted by votes", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'votes', descending: true })
+      })
+  })
+  test("200: Responds with all articles, sorted by article_img_url", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_img_url")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'article_img_url', descending: true })
+      })
+  })
+  test("200: Responds with all articles when sort_by is undefined, must use sort_by default (created_at) instead", () => {
+    return request(app)
+      .get("/api/articles?sort_by=")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'created_at', descending: true })
+      })
+  })
+  test("400: Responds with an error when sort_by is INVALID", () => {
+    return request(app)
+      .get("/api/articles?sort_by=INVALID")
+      .expect(400)
+      .then(({body: { msg }}) => {
+        expect(msg).toBe('It is not possible to sort by INVALID')
+      })
+  })
+})
+
+describe("GET /api/articles?sort=x&order=y | x= desc or asc and y= one of coluns from articles", () => {
+  test("200: Responds with articles when order by article_id and order ASC", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=asc")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'article_id', descending: false })
+      })
+  })
+  test("400: Responds with an error when using an INVALID query (sort_B)", () => {
+    return request(app)
+      .get("/api/articles?sort_B=article_id&order=asc")
+      .expect(400)
+      .then(({body: { msg }})=>{
+        expect(msg).toBe('Invalid query parameter: sort_B')
+      })
+  })
+})
+
+describe("GET /api/articles?order=x | x= desc or asc", () => {
+  test("200: Responds with articles sorted by date in descending or (articles.created_at) ", () => {
+    return request(app)
+      .get("/api/articles?order=Desc")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'created_at', descending: true})
+      })
+  })
+  test("200: Responds with articles sorted by date in ascending order (articles.created_at) ", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'created_at', descending: false})
+      })
+  })
+  test('200: Responds with articles when order by is undefined, setting default order instead',() => {
+    return request(app)
+      .get("/api/articles?order=")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'created_at', descending: true})
+      })
+  })
+  test('400: Responds with an error when order by is INVALID',() => {
+    return request(app)
+      .get("/api/articles?order=INVALID")
+      .expect(400)
+      .then(({body: { msg }})=>{
+          expect(msg).toBe('It is not possible to order by INVALID')
+      })
+  })    
 })
 
 describe("GET /api/articles/:article_id", () => {
