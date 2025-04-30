@@ -40,7 +40,6 @@ const selectArticles = () => {
 
     return db.query(query)
         .then(({ rows })=> {
-            console.log(rows)
             if(rows.length === 0){
                 return Promise.reject({ status: 404, msg: 'No articles found' })
             } else {
@@ -61,7 +60,6 @@ const updateArticleById = ( article_id, inc_votes ) => {
     } 
 
     queryStr += ` RETURNING *`
-    console.log(queryStr)
     promiseArr.unshift(db.query(queryStr, queryArgs))
 
     return Promise.all(promiseArr).then((results)=> {

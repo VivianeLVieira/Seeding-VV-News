@@ -406,3 +406,31 @@ describe("PATCH /api/articles/:article_id", () => {
       })
   })
 })
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: Responds with no content when comment is deleted", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then((response) => {
+        expect(response.res.statusMessage).toEqual('No Content')
+        expect(response.body).toEqual({})
+      })
+  })
+  test("404: Responds with an error, a comment can NOT be deleted when comment_id do NOT exist", () => {
+    return request(app)
+      .delete("/api/comments/789")
+      .expect(404)
+      .then(({ body: { msg }}) => {
+        expect(msg).toBe('No comment found')
+    })
+  })
+  test("400: Responds with an error, a comment can NOT be deleted when comment_id is NOT a number", () => {
+    return request(app)
+      .delete("/api/comments/INVALID")
+      .expect(400)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('Bad Request')
+      })
+  })
+})

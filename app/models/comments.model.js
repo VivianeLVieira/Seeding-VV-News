@@ -1,7 +1,7 @@
 const db = require("../../db/connection")
 const { checkArticleExists } = require("./articles.model")
 
-exports.selectCommentsById = (article_id) => {
+const selectCommentsById = (article_id) => {
     const promiseArr = []
     let queryArgs = []
     let queryStr = `SELECT comment_id, article_id, body, votes, author, created_at FROM comments`
@@ -22,13 +22,12 @@ exports.selectCommentsById = (article_id) => {
         if(queryPromise.rows.length === 0){
             return Promise.reject({ status: 404, msg: 'No comments found' })
         } else {
-            console.log(queryPromise.rows)
             return queryPromise.rows;
         }
     })
 }
 
-exports.insertComment = ( article_id, username, body ) => {
+const insertComment = ( article_id, username, body ) => {
     const promiseArr = []
     let queryArgs = []
     let queryStr = `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *`
@@ -47,6 +46,36 @@ exports.insertComment = ( article_id, username, body ) => {
     })
 }
 
+const deleteCommentByCommentId = (comment_id) => {
+    const promiseArr = []
+    let queryArgs = []
+    let queryStr = `DELETE FROM comments WHERE comment_id = $1`
+
+    if (comment_id) {
+        promiseArr.push(checkCommentExists(comment_id))
+        queryArgs.push(comment_id)
+    } 
+
+    promiseArr.unshift(db.query(queryStr, queryArgs))
+
+    return Promise.all(promiseArr).then((results)=> {
+        const queryPromise = results[0]
+        return queryPromise.rows;
+    })
+}
+
+const checkCommentExists = (comment_id) => {
+    return db
+        .query('SELECT * FROM comments WHERE comment_id = $1', [comment_id])
+        .then(({ rows }) => {
+            if(rows.length === 0){
+                return Promise.reject({ status: 404, msg: 'No comment found' })
+            } else {
+                return rows
+            }
+        })
+}
+
 const checkUserExists = (username) => {
     return db
         .query('SELECT * FROM users WHERE username = $1', [username])
@@ -58,3 +87,5 @@ const checkUserExists = (username) => {
             }
         })
 }
+
+module.exports = { selectCommentsById, insertComment, checkCommentExists, deleteCommentByCommentId }
