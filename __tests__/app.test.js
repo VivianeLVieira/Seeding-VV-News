@@ -251,6 +251,35 @@ describe("GET /api/articles?order=x | x= desc or asc", () => {
   })    
 })
 
+describe("GET /api/articles?topic=", () => {
+  test("200: Responds with articles when filtering by topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats") 
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        expect(articles).toHaveLength(1)
+        expect(articles).toBeSorted({ key: 'created_at', descending: true })
+      })
+  })
+  test("400: Responds with an error when using an INVALID query (topicCCCCC)", () => {
+    return request(app)
+      .get("/api/articles?topicCCCCC=cats")
+      .expect(400)
+      .then(({body: { msg }})=>{
+        expect(msg).toBe('Invalid query parameter: topicCCCCC')
+      })
+  })
+  test("404: Responds with an error when using an INVALID topic ", () => {
+    return request(app)
+      .get("/api/articles?topic=BANANA")
+      .expect(404)
+      .then(({body: { msg }})=>{
+        expect(msg).toBe('No articles found')
+      })
+  })
+})
+
+
 describe("GET /api/articles/:article_id", () => {
   test("200: Responds with an object containing the article for an specific ID", () => {
     return request(app)
