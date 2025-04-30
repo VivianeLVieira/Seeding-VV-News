@@ -30,7 +30,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         article_id SERIAL PRIMARY KEY,
         title VARCHAR (100),
         topic VARCHAR (40) REFERENCES topics(slug) ON DELETE CASCADE,
-        author VARCHAR (50) REFERENCES users(username),
+        author VARCHAR (50) REFERENCES users(username) ON DELETE CASCADE,
         body TEXT NOT NULL, 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
         votes INT DEFAULT 0,
@@ -42,7 +42,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         article_id INT REFERENCES articles(article_id) ON DELETE CASCADE,
         body TEXT NOT NULL,
         votes INT DEFAULT 0,
-        author VARCHAR (50) REFERENCES users(username),
+        author VARCHAR (50) REFERENCES users(username) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`) 
     })
     //.then((result)=>{console.log(result)}) // to confirm that create command executed
@@ -91,13 +91,12 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     .then((result) => {//creating a map to save titles and article_id (to substitute for loop)
       const articleMap = {}; 
       for (const article of result.rows) { 
-        //console.log(article)
+
         articleMap[article.title] = article.article_id;
       }
       return articleMap;
     })
     .then((articleMap) => { 
-      //console.log(articleMap)
       const formattedComments = commentData.map((comment) => {
         return [articleMap[comment.article_title], comment.body, comment.votes, comment.author, convertTimestampToDate(comment).created_at];
       });

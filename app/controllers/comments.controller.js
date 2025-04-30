@@ -11,7 +11,6 @@ exports.getCommentsByArticleId = (req, res, next) => {
         })
 }
 
-
 exports.postCommentsByArticleId = (req, res, next) => {
     const { username, body } = req.body;
     const { article_id } = req.params;
