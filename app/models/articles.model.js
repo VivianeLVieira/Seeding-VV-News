@@ -32,7 +32,7 @@ const selectArticles = () => {
             articles.created_at,
             articles.votes,
             article_img_url,
-            COUNT(comment_id) as comment_count 
+            COUNT(comment_id) as comment_count
         FROM articles LEFT JOIN comments 
             ON articles.article_id = comments.article_id 
         GROUP BY articles.article_id

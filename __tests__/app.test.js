@@ -434,3 +434,30 @@ describe("DELETE /api/comments/:comment_id", () => {
       })
   })
 })
+
+describe("GET /api/users", () => {
+  test("200: Responds with an array of user", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users }}) => {
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String)
+          })
+        })
+      })
+  })
+  test("404: Responds with NOT FOUND, when the user table is empty ", () => {
+    db.query('DELETE FROM users')
+    return request(app)
+    .get("/api/users")
+      .expect(404)
+      .then(({ body: { msg }}) => {
+          expect(msg).toBe('No users found')
+      })
+  })
+})

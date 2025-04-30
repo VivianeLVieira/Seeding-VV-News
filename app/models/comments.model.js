@@ -1,5 +1,6 @@
 const db = require("../../db/connection")
 const { checkArticleExists } = require("./articles.model")
+const { checkUserExists } = require("./users.model")
 
 const selectCommentsById = (article_id) => {
     const promiseArr = []
@@ -70,18 +71,6 @@ const checkCommentExists = (comment_id) => {
         .then(({ rows }) => {
             if(rows.length === 0){
                 return Promise.reject({ status: 404, msg: 'No comment found' })
-            } else {
-                return rows
-            }
-        })
-}
-
-const checkUserExists = (username) => {
-    return db
-        .query('SELECT * FROM users WHERE username = $1', [username])
-        .then(({ rows }) => {
-            if(rows.length === 0){
-                return Promise.reject({ status: 404, msg: 'No user found' })
             } else {
                 return rows
             }

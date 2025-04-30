@@ -4,6 +4,7 @@ const { getApi } = require("../app/controllers/api.controller")
 const { getTopics } = require("../app/controllers/topics.controller")
 const { getArticleById, getArticles, patchArticleById } = require("../app/controllers/articles.controller")
 const { getCommentsByArticleId, postCommentsByArticleId, deleteCommentById } = require("../app/controllers/comments.controller")
+const { getUsers } = require("../app/controllers/users.controller")
 
 app.use(express.json())
 
@@ -22,6 +23,8 @@ app.post("/api/articles/:article_id/comments", postCommentsByArticleId)
 app.patch("/api/articles/:article_id", patchArticleById)
 
 app.delete("/api/comments/:comment_id", deleteCommentById)
+
+app.get("/api/users", getUsers)
 
 app.all('/*splat', (req, res) => {
     res.status(404).send({msg: 'Path not found'})
