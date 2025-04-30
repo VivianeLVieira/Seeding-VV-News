@@ -228,7 +228,6 @@ describe("GET /api/articles/:article_id/comments", () => {
   })
 })
 
-
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: Responds with the posted comment using a valid format", () => {
     const newComment = { username: 'butter_bridge', body: 'This is a good article.' }
@@ -305,7 +304,7 @@ describe("POST /api/articles/:article_id/comments", () => {
           expect(msg).toBe('Path not found')
       })
   })
-  test("400: Responds with an error, comment can not be saved when username was NOT informed", () => {
+  test("400: Responds with an error, comment can not be saved when username is NOT informed", () => {
     const newComment = { usernam: 'butter_bridge', body: 'This is a good article.' }
     return request(app)
       .post("/api/articles/2/comments")
@@ -327,3 +326,83 @@ describe("POST /api/articles/:article_id/comments", () => {
   })
 })
 
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: Responds with the updated article", () => {
+    const newUpdate = { inc_votes: 5 }
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newUpdate)
+      .expect(200)
+      .then(({ body: { article }}) => {
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 105,
+          article_img_url: expect.any(String),
+        })
+      })
+  })
+  test("200: Responds with the updated article, decreasing votes", () => {
+    const newUpdate = { inc_votes: -5 }
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newUpdate)
+      .expect(200)
+      .then(({ body: { article }}) => {
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 95,
+          article_img_url: expect.any(String),
+        })
+      })
+  })
+  test("404: Responds with an error, article can not be updated when article_id can NOT be FOUND", () => {
+    const newUpdate = { inc_votes: 30 }
+    return request(app)
+      .patch("/api/articles/888")
+      .send(newUpdate)
+      .expect(404)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('No article found')
+      })
+  })
+  test("400: Responds with an error, article can not be updated when inc_votes is NOT a number", () => {
+    const newUpdate = { inc_votes: 'a' }
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newUpdate)
+      .expect(400)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('Bad Request')
+      })
+  })
+  test("400: Responds with an error, article can not be updated when inc_votes is NOT informed", () => {
+    const newUpdate = { inc_invalid: 30 }
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newUpdate)
+      .expect(400)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('Bad Request')
+      })
+  })
+  test("400: Responds with an error, article can not be updated when article_id is INVALID", () => {
+    const newUpdate = { inc_votes: 30 }
+    return request(app)
+      .patch("/api/articles/invalidId")
+      .send(newUpdate)
+      .expect(400)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('Bad Request')
+      })
+  })
+})

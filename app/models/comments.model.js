@@ -1,4 +1,5 @@
 const db = require("../../db/connection")
+const { checkArticleExists } = require("./articles.model")
 
 exports.selectCommentsById = (article_id) => {
     const promiseArr = []
@@ -27,8 +28,6 @@ exports.selectCommentsById = (article_id) => {
     })
 }
 
-
-
 exports.insertComment = ( article_id, username, body ) => {
     const promiseArr = []
     let queryArgs = []
@@ -46,18 +45,6 @@ exports.insertComment = ( article_id, username, body ) => {
         const queryPromise = results[0]
         return queryPromise.rows[0];
     })
-}
-
-const checkArticleExists = (article_id) => {
-    return db
-        .query('SELECT * FROM articles WHERE article_id = $1', [article_id])
-        .then(({ rows }) => {
-            if(rows.length === 0){
-                return Promise.reject({ status: 404, msg: 'No article found' })
-            } else {
-                return rows
-            }
-        })
 }
 
 const checkUserExists = (username) => {
