@@ -1,4 +1,3 @@
-const { promises } = require("supertest/lib/test")
 const db = require("../../db/connection")
 
 exports.selectTopics = () => {
