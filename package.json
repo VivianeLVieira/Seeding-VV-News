@@ -10,20 +10,22 @@
     "prepare": "husky install",
     "start": "node listen.js",
     "test-seed": "jest seed.test.js",
+    "seed-prod": "NODE_ENV=production npm run seed",
     "selects": "node ./db/selects.js",
     "mutate-test": "npx stryker run"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/northcoders/be-nc-news.git"
+    "url": "git+https://github.com/VivianeLVieira/Seeding-VV-News"
+
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/northcoders/be-nc-news/issues"
+    "url": "https://github.com/VivianeLVieira/Seeding-VV-News/issues"
   },
-  "homepage": "https://github.com/northcoders/be-nc-news#readme",
+  "homepage": "https://github.com/VivianeLVieira/Seeding-VV-News#readme",
   "devDependencies": {
     "@stryker-mutator/jest-runner": "^8.7.1",
     "husky": "^8.0.2",
