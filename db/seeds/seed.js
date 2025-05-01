@@ -17,7 +17,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(`CREATE TABLE topics(
         slug VARCHAR(40) PRIMARY KEY,
         description VARCHAR(500),
-        img_url TEXT)`) //TEXT has ilimited string length
+        img_url TEXT)`) 
     })
     .then(() => {
       return db.query(`CREATE TABLE users(
@@ -45,20 +45,16 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         author VARCHAR (50) REFERENCES users(username) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`) 
     })
-    //.then((result)=>{console.log(result)}) // to confirm that create command executed
-    //.then(()=>{console.log(userData)}) // that's how it is possible to access arguments
     .then(() => {
       const formattedTopics = topicData.map((topic) => {
-        //console.log(topic); // check what is inside topic
         return [topic.slug, topic.description, topic.img_url];
       })
-      //console.log(formattedTopics)
       const insertTopicsDataQuery = format(`INSERT INTO topics
         (slug, description, img_url)
         VALUES
         %L
         RETURNING *;`,
-        formattedTopics // first part is the insert, then array with data
+        formattedTopics 
       )
       return db.query(insertTopicsDataQuery);
     }) 
@@ -88,7 +84,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       )
       return db.query(insertArticlesDataQuery);
     }) 
-    .then((result) => {//creating a map to save titles and article_id (to substitute for loop)
+    .then((result) => {
       const articleMap = {}; 
       for (const article of result.rows) { 
 
@@ -110,29 +106,5 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       )
       return db.query(insertCommentsDataQuery);
     })
-   /*
-    .then((result) => { // forLoop solution to insertCommentsDataQuery
-      const articlesInsertResult = result.rows;
-      const formattedComments = commentData.map((comment) => {
-        let article_id = 0;
-        for (let i = 0; i < articlesInsertResult.length; i++){
-          if (articlesInsertResult[i].title === comment.article_title){
-            article_id = articlesInsertResult[i].article_id;
-            break;
-          }
-        }
-        return [article_id, comment.body, comment.votes, comment.author, convertTimestampToDate(comment).created_at];
-      });
-
-      const insertCommentsDataQuery = format(`INSERT INTO comments
-        (article_id, body, votes, author, created_at)
-        VALUES
-        %L
-        RETURNING *;`,
-        formattedComments 
-      )
-      return db.query(insertCommentsDataQuery);
-    })
-    */
 };
 module.exports = seed;
