@@ -11,9 +11,6 @@ if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
     if(process.env.PGDATABASE){
         console.log(`Connected to ${process.env.PGDATABASE}`)
     }
-    else if(process.env.DATABASE_URL){
-       // console.log(`Connected to ${process.env.DATABASE_URL}`)
-    }
 }
 
 const config = {};
