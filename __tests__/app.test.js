@@ -292,7 +292,7 @@ describe("GET /api/articles/:article_id", () => {
           topic: 'mitch',
           author: 'butter_bridge',
           body: 'I find this existence challenging',
-          created_at: '2020-07-09T20:11:00.000Z',
+          created_at: '2020-07-09T21:11:00.000Z',
           votes: 100,
           article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
           comment_count: 11
@@ -326,7 +326,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         body: 'Ambidextrous marsupial',
         votes: 0,
         author: 'icellusedkars',
-        created_at: "2020-09-19T23:10:00.000Z"
+        created_at: "2020-09-20T00:10:00.000Z"
       },
       {
         comment_id: 10,
@@ -334,7 +334,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         body: 'git push origin master',
         votes: 0,
         author: 'icellusedkars',
-        created_at: "2020-06-20T07:24:00.000Z"
+        created_at: "2020-06-20T08:24:00.000Z"
       }
     ]
     return request(app)

@@ -32,7 +32,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         topic VARCHAR (40) REFERENCES topics(slug) ON DELETE CASCADE,
         author VARCHAR (50) REFERENCES users(username) ON DELETE CASCADE,
         body TEXT NOT NULL, 
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP, 
         votes INT DEFAULT 0,
         article_img_url VARCHAR(1000))`) 
     })
@@ -43,7 +43,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         body TEXT NOT NULL,
         votes INT DEFAULT 0,
         author VARCHAR (50) REFERENCES users(username) ON DELETE CASCADE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`) 
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP)`) 
     })
     .then(() => {
       const formattedTopics = topicData.map((topic) => {
