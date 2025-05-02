@@ -1,7 +1,6 @@
-const apiRouter = require("express").Router();
+const apiRouter = require("express").Router()
+const { getApi } = require("../controllers/api.controller")
 
-apiRouter.get("/", (req, res) => {
-  res.status(200).send("All OK from /api");
-})
+apiRouter.get("/", getApi)
 
-
+module.exports=apiRouter
