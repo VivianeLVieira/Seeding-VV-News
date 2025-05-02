@@ -1,6 +1,6 @@
 const db = require("../connection")
 const format = require("pg-format")
-const { convertTimestampToDate } = require("./utils")
+const { convertTimestampToDate } = require("../utils")
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db.query('DROP TABLE IF EXISTS comments;') 
