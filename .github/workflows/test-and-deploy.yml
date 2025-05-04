@@ -36,7 +36,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm t
+        run: DATABASE_URL=postgresql://test_user:test_password@localhost:5432/my_db npm t
 
   deploy:
     runs-on: ubuntu-latest
