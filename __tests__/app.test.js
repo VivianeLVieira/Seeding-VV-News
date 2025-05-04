@@ -1,5 +1,5 @@
 const endpointsJson = require("../endpoints.json");
-const db = require("../db/connection")
+const db = require("../app/db/connection")
 const seed = require("../db/seeds/seed")
 const data = require("../db/data/test-data")
 const app = require("../app/app")
@@ -468,6 +468,16 @@ describe("POST /api/articles/:article_id/comments", () => {
   })
   test("400: Responds with an error, comment can not be saved when username is NOT informed", () => {
     const newComment = { usernam: 'butter_bridge', body: 'This is a good article.' }
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg }}) => {
+        expect(msg).toEqual('Bad Request')
+      })
+  })
+  test("400: Responds with an error, comment can not be saved when body is NOT informed", () => {
+    const newComment = { username: 'butter_bridge' }
     return request(app)
       .post("/api/articles/2/comments")
       .send(newComment)

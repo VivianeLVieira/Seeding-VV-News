@@ -1,4 +1,4 @@
-const db = require("../connection")
+const db = require("../../app/db/connection")
 const format = require("pg-format")
 const { convertTimestampToDate } = require("../utils")
 

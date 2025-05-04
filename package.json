@@ -1,14 +1,14 @@
 {
-  "name": "be-nc-news",
+  "name": "vv-news",
   "version": "1.0.0",
-  "description": "bc-nc-news",
+  "description": "vv-news",
   "main": "listen.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup-dbs.sql",
     "seed": "node ./db/seeds/run-seed.js",
     "seed-dev": "NODE_ENV=development npm run seed",
     "seed-prod": "NODE_ENV=production npm run seed",
-    "start": "node listen.js",
+    "start": "PORT=9090 node listen.js",
     "test": "jest --runInBand",
     "prepare": "husky install",
     "test-seed": "jest seed.test.js",

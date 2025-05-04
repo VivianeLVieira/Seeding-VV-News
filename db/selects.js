@@ -1,4 +1,4 @@
-const db = require("./connection")
+const db = require("../app/db/connection")
 
 
 function getAllUsers(){ // Get all of the users

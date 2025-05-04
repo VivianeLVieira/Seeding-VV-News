@@ -1,4 +1,4 @@
-const db = require("../../db/connection")
+const db = require("../../app/db/connection")
 
 const selectArticles = (sort_by, order, topic) => {
     const sortOptions = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url']
@@ -6,12 +6,12 @@ const selectArticles = (sort_by, order, topic) => {
     let queryArgs = []
     let query = `SELECT 
             articles.article_id, 
-            title,
-            topic,
+            articles.title,
+            articles.topic,
             articles.author,
             articles.created_at,
             articles.votes,
-            article_img_url,
+            articles.article_img_url,
             COUNT(comment_id) ::INT AS comment_count 
         FROM articles LEFT JOIN comments 
             ON articles.article_id = comments.article_id`
@@ -22,6 +22,7 @@ const selectArticles = (sort_by, order, topic) => {
     if (!orderOptions.includes(order.toUpperCase())) {
         return Promise.reject({ status: 400, msg: `It is not possible to order by ${order}` }) 
     }
+
     if (sortOptions.indexOf(sort_by.toLowerCase()) === -1 ) {
         return Promise.reject({ status: 400, msg: `It is not possible to sort by ${sort_by}` })
     }
@@ -35,18 +36,11 @@ const selectArticles = (sort_by, order, topic) => {
     query += ` ORDER BY articles.${sort_by} ${order}`;
 
     return db.query(query, queryArgs)
-        .then(({ rows })=> {
-            if(rows.length === 0){
-                return Promise.reject({ status: 404, msg: 'No articles found' })
-            } else {
-                return rows
-            }
-        })
+        .then(({ rows })=> rows )
 }
 
 const selectArticleById = (article_id) => {
-    return db.query(
-        `SELECT 
+    const query = `SELECT 
             articles.article_id, 
             title,
             topic,
@@ -59,35 +53,25 @@ const selectArticleById = (article_id) => {
         FROM articles LEFT JOIN comments 
             ON articles.article_id = comments.article_id
         WHERE articles.article_id = $1 
-        GROUP BY articles.article_id`,
-        [article_id]
-    ).then(({ rows }) => {
-        if(rows.length === 0){
-            return Promise.reject({ status: 404, msg: 'No article found' })
-        } else {
-            return rows[0]
-        }
-    })
+        GROUP BY articles.article_id`
+
+    if (!article_id ) {
+        return Promise.reject({ status: 404, msg: 'article_id not provided' })
+    } 
+
+    return db.query(query, [article_id])
+        .then(({ rows }) => rows[0])
 }
 
 const updateArticleById = ( article_id, inc_votes ) => {
-    const promiseArr = []
-    let queryArgs = []
-    let queryStr = `UPDATE articles SET votes = votes + $1 `
+    const query = `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *`
 
-    if (article_id && inc_votes) {
-        queryStr += ` WHERE article_id = $2`
-        promiseArr.push(checkArticleExists(article_id))
-        queryArgs.push(inc_votes, article_id)
+    if (!article_id || !inc_votes) {
+        return Promise.reject({ status: 404, msg: 'article_id or inc_votes not provided' })
     } 
 
-    queryStr += ` RETURNING *;`
-    promiseArr.unshift(db.query(queryStr, queryArgs))
-
-    return Promise.all(promiseArr).then((results)=> {
-        const queryPromise = results[0]
-        return queryPromise.rows[0];
-    })
+    return db.query(query, [inc_votes, article_id])
+        .then(({rows}) => rows[0] )
 }
 
 const checkArticleExists = (article_id) => {
