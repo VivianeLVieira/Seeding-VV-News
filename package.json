@@ -18,7 +18,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VivianeLVieira/Seeding-VV-News"
-
   },
   "keywords": [],
   "author": "",
@@ -36,6 +35,7 @@
     "supertest": "^7.1.0"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "pg": "^8.15.6",
