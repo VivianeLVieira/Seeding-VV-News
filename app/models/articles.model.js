@@ -36,13 +36,11 @@ const selectArticles = (sort_by, order, topic) => {
     query += ` GROUP BY articles.article_id`
 
     if (sort_by === 'comment_count'){
-        console.log('entrou aqui')
         query += ` ORDER BY ${sort_by} ${order}`;
     } else {
         query += ` ORDER BY articles.${sort_by} ${order}`;
     }
 
-    console.log(query)
     return db.query(query, queryArgs)
         .then(({ rows })=> rows )
 }
