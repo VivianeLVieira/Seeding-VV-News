@@ -120,6 +120,16 @@ describe("GET /api/articles?sort_by=x | x= article_id, title, topic, author, bod
         expect(articles).toBeSorted({ key: 'article_id', descending: true })
       })
   })
+  test("200: Responds with all articles, sorted by comment_count", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body: { articles }}) => {
+        console.log(articles)
+        expect(articles).toHaveLength(13)
+        expect(articles).toBeSorted({ key: 'comment_count', descending: true })
+      })
+  })
   test("200: Responds with all articles, sorted by title", () => {
     return request(app)
       .get("/api/articles?sort_by=title")

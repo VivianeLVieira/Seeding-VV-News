@@ -1,7 +1,7 @@
 const db = require("../../app/db/connection")
 
 const selectArticles = (sort_by, order, topic) => {
-    const sortOptions = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url']
+    const sortOptions = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count']
     const orderOptions = ['ASC', 'DESC']
     let queryArgs = []
     let query = `SELECT 
@@ -15,6 +15,7 @@ const selectArticles = (sort_by, order, topic) => {
             COUNT(comment_id) ::INT AS comment_count 
         FROM articles LEFT JOIN comments 
             ON articles.article_id = comments.article_id`
+
 
     sort_by = sort_by || 'created_at' 
     order = order || 'DESC' 
@@ -33,8 +34,15 @@ const selectArticles = (sort_by, order, topic) => {
     } 
 
     query += ` GROUP BY articles.article_id`
-    query += ` ORDER BY articles.${sort_by} ${order}`;
 
+    if (sort_by === 'comment_count'){
+        console.log('entrou aqui')
+        query += ` ORDER BY ${sort_by} ${order}`;
+    } else {
+        query += ` ORDER BY articles.${sort_by} ${order}`;
+    }
+
+    console.log(query)
     return db.query(query, queryArgs)
         .then(({ rows })=> rows )
 }
