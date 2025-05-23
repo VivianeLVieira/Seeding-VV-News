@@ -2,11 +2,11 @@
 
 Link: https://seeding-vv-news.onrender.com
 
-This project provides a API to manage and access "Articles". User can add comments to an article and vote. 
+This project provides an API to manage and access "Articles". Users can add comments to an article and vote. 
 
-Follow the steps below to test the project by creating your own version! 
+Follow the steps below to test the project by creating your version! 
 
-A. Clone the project to you local environment
+A. Clone the project to your local environment
 
 1. Get the repository link 
 
@@ -26,19 +26,19 @@ A. Clone the project to you local environment
 
         command: cd folder_project_name
  
-    •	Clone the repository into this folder, replacing repository-url with th link you copied in the "step 2"
+    •	Clone the repository into this folder, replacing repository-url with the link you copied in step 2
 
         command: git clone repository-url
 
-B. Install Depedences -> use the follow commands to install necessary dependences 
+B. Install dependencies -> use the following commands to install the necessary dependencies 
 
-3. Install all dependences from package.json 
+3. Install all dependencies from package.json 
 
-        comand: npm install
+        command: npm install
 
 Or, follow steps 4 - 12 to install them manually.
 
-4. Add dotenv to manager the enviroment variables (development and test)
+4. Add dotenv to manage the environment variables (development and test)
 
         comands: npm install dotenv
 
@@ -46,7 +46,7 @@ Or, follow steps 4 - 12 to install them manually.
 
         command: npm install pg
 
-6. Add pg-format, it is a library that formmats SQL queries
+6. Add pg-format, it is a library that formats SQL queries
 
         command: npm install pg-format 
 
@@ -54,31 +54,31 @@ Or, follow steps 4 - 12 to install them manually.
 
         command: npm install --save-dev supertest
 
-8. Add Jest, testing framework to run the test suite
+8. Add Jest, a testing framework to run the test suite
 
         command: npm install --save-dev jest
 
-9. Add jest-sorted, it is a custom Jest matcher to assert if a array is sorted
+9. Add jest-sorted, it is a custom Jest matcher to assert if an array is sorted
 
         command: npm install --save-dev jest-sorted
 
-10. Add jest-extended, it adds additional matches for Jest
+10. Add jest-extended, which adds additional matches for Jest
 
         command: npm install --save-dev jest-extended
 
-11. Add husky, that will trigger actions like running tests before the code is commited
+11. Add husky, which will trigger actions like running tests before the code is committed
 
         command: npm install --save-dev husky
 
-12. EXTRA - Add Stryker Mutator, it is a tool that measute the effectiveness of the tests
+12. EXTRA - Add Stryker Mutator, it is a tool that measures the effectiveness of the tests
 
         command: npm install --save-dev @stryker-mutator/core
 
 To run Stryker -> command: npx stryker init
 
-C. Enviroment configuration
+C. Environment configuration
 
-13. Create an .env files, use the provided .env.example file as reference  
+13. Create an .env files, use the provided .env.example file as a reference  
 
     •	 Name the first file to ".env.development". 
     
@@ -97,7 +97,7 @@ D. Verify setup and run tests
 
 14. Run the following scripts and check the console logs ->
 
-        command: npm runsetup-dbs
+        command: npm run setup-dbs
 
 This runs the script to create the database.
 
@@ -113,7 +113,7 @@ This runs tests for your seed function, which calls your seed function with test
 
 Those commands run all tests from the project
 
-E. Requiriments
+E. Requirements
 
 To run this project, you must have the following software versions or later installed:
 
